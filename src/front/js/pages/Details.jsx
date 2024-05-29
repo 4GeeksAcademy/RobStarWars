@@ -1,17 +1,19 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Details = () => {
 
     const { store } = useContext(Context);
 
-
+    const params = useParams();
+    const characterId = parseInt(params.characterid, 10);
+    const character = store.characters[characterId];
 
 <div>
 <div class="card text-center">
     <div class="card-header">
-        {/* {store.item.name} */} Nombre
+       <h1> {character.gender}</h1>
     </div>
     <div class="card-body d-flex">
         <div>

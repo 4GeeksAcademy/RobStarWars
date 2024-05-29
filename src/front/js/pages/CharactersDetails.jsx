@@ -6,7 +6,7 @@ import { Context } from "../store/appContext";
 export const Characters = () => {
     const {store } = useContext(Context)
     
-  
+  console.log(store.characters);
 
     return (
         <div>
@@ -21,7 +21,7 @@ export const Characters = () => {
                             <span className="card-text">Gender: {item.gender}</span><br />
                             <span className="card-text">Hair color: {item.hair_color}</span><br />
                             <span className="card-text">Eye color: {item.eye_color}</span><br />
-                            <Link to={`details/${item.id}`} className="btn btn-primary mt-2">Más Info</Link>
+                            <Link to={'/character-details/' + index} className="btn btn-primary mt-2">Más Info</Link>
                         </div>
                     </div>
                 ))}

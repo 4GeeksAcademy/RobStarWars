@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			loadSomeData: () => {
 
 				//Traer a los personajes
-				fetch("https://www.swapi.tech/api/people")
+				fetch("https://swapi.dev/api/people")
 					.then((response) => response.json())
 					.then((data) => setStore({ characters: data.results }))
 				
