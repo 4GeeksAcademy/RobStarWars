@@ -9,6 +9,9 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    first_name = db.Column(db.String(), unique=False)
+    last_name = db.Column(db.String(), unique=False)
+
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -17,4 +20,41 @@ class Users(db.Model):
         # Do not serialize the password, its a security breach
         return {'id': self.id,
                 'email': self.email,
-                'is_active': self.is_active}
+                'is_active': self.is_active,
+                'first_name': self.first_name,
+                'last_name': self.last_name}
+
+class Posts(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_to = db.relationship('Users', foreign_keys=[user_id])
+
+    def __repr__(self):
+        return f'<Post: {self.title}>'
+
+    def serialize(self):
+        # Do not serialize the password, its a security breach
+        return {'id': self.id,
+                'title': self.title,
+                'user_id': self.user_id}
+
+
+class Comments(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    body = db.Column(db.String(), nullable=False)
+    date_comment = db.Column(db.Date)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author_to = db.relationship('Users', foreign_keys=[author_id])
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    post_to = db.relationship('Posts', foreign_keys=[post_id])
+
+    def __repr__(self):
+        return f'<Comments: {self.post_id}>'
+        
+    def serialize(self):
+        return {'id': self.id,
+                'author_id': self.author_id,
+                'post_id': self.post_id,
+                'body': self.body,
+                'date_comment': self.date_comment}
