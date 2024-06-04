@@ -92,7 +92,7 @@ class Starships(db.Model):
         return {'id': self.id,
                 'model': self.model,
                 'creation_date': self.creation_date,
-                'owner_id': self.owner_id
+                'owner_id': self.owner_id,
                 'image': self.image}
 
 class Favorite_starships(db.Model):
