@@ -58,3 +58,37 @@ class Comments(db.Model):
                 'post_id': self.post_id,
                 'body': self.body,
                 'date_comment': self.date_comment}
+
+class Planets(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(), unique=True, nullable=False)
+    discovery_date = db.Column(db.Date)
+    planetarian_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    planetarian_to = db.relationship('Users', foreign_keys=[planetarian_id])
+
+
+    def __repr__(self):
+        return f'<Planet: {self.name}>'
+        
+    def serialize(self):
+        return {'id': self.id,
+                'name': self.name,
+                'discovery_date': self.discovery_date,
+                'planetarian_id': self.planetarian_id}
+
+class Starships(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    model = db.Column(db.String(), unique=True, nullable=False)
+    creation_date = db.Column(db.Date)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    owner_to = db.relationship('Users', foreign_keys=[owner_id])
+
+
+    def __repr__(self):
+        return f'<Model: {self.model}>'
+        
+    def serialize(self):
+        return {'id': self.id,
+                'model': self.model,
+                'creation_date': self.creation_date,
+                'owner_id': self.owner_id}
