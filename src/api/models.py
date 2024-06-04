@@ -65,6 +65,7 @@ class Planets(db.Model):
     discovery_date = db.Column(db.Date)
     planetarian_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     planetarian_to = db.relationship('Users', foreign_keys=[planetarian_id])
+    image = db.Column(db.String(), unique=True, nullable=False)
 
 
     def __repr__(self):
@@ -91,4 +92,20 @@ class Starships(db.Model):
         return {'id': self.id,
                 'model': self.model,
                 'creation_date': self.creation_date,
-                'owner_id': self.owner_id}
+                'owner_id': self.owner_id
+                'image': self.image}
+
+class Favorite_starships(db.Model):
+    model_id = db.Column(db.String(), db.ForeingKey('starships.model'))
+    model_to = db.relationship('Starships', foreign_keys=[model_id])
+    image_id = db.Column(db.String(), db.ForeingKey('starships.image'))
+    model_to = db.relationship('Starships', foreign_keys=[image_id])
+
+
+    def __repr__(self):
+        return f'<Model: {self.model}>'
+        
+    def serialize(self):
+        return {'model': self.model,
+                'image_id': self.image_id}
+
