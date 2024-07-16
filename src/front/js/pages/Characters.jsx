@@ -21,7 +21,7 @@ export const Characters = () => {
                             <span className="card-text">Gender: {item.gender}</span><br />
                             <span className="card-text">Hair color: {item.hair_color}</span><br />
                             <span className="card-text">Eye color: {item.eye_color}</span><br />
-                            <Link to={'/character-details/' + index} className="btn btn-primary mt-2">Más Info</Link>
+                            <Link to={'/character-details/' + index} onClick={() => actions.setCurrentItem(item)} className="btn btn-primary mt-2">Más Info</Link>
                         </div>
                     </div>
                 ))}

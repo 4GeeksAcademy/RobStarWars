@@ -1,17 +1,20 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ScrollToTop from "./component/scrollToTop";
-import { BackendURL } from "./component/backendURL";
+import ScrollToTop from "./component/scrollToTop.js";
+import { BackendURL } from "./component/backendURL.js";
 
 import { Home } from "./pages/Home.jsx";
-import { Demo } from "./pages/demo";
-import { Single } from "./pages/single";
-import injectContext from "./store/appContext";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
+import { Single } from "./pages/single.js";
+import injectContext from "./store/appContext.js";
 
-import { Details } from "./pages/Details.jsx";
+import { Navbar } from "./component/Navbar.jsx";
+import { Footer } from "./component/footer.js";
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx"
+import { CharacterDetails } from "./pages/CharacterDetails.jsx";
+import { PlanetDetails } from "./pages/PlanetDetails.jsx";
+import { Contact } from "./pages/Contact.jsx"
 
 //create your first component
 const Layout = () => {
@@ -28,8 +31,11 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Details />} path='/character-details/:characterid' />
-                        <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Signup />} path="/signup" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<Contact />} path="/contacts" />
+                        <Route element={<CharacterDetails />} path='/character-details/:characterid' />
+                        <Route element={<PlanetDetails />} path='/planet-details/:planetid' />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

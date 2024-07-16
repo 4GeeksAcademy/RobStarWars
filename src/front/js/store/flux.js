@@ -14,12 +14,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			
+			isLogin: false,
 			characters: [],
 			planets: [],
-
+			currentItem: {}
 
 		},
 		actions: {
+			
+			setCurrentItem: (item) => {
+             
+                setStore({currentItem: item});
+            },
 
 			loadSomeData: () => {
 
@@ -37,6 +43,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then((response) => response.json())
 					.then((data) => setStore({starships: data.results }))
 				},
+			setIsLogin: (login) => setStore({ isLogin: login }),
+			profile: async() => {
+				const url = process.env.BACKEND_URL + '/api/profile'
+				const token = localStorage.getItem('token')
+				const options = {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'response/json',
+						'Authorization': `Bearer ${token}`
+					}
+				}
+				const response = await fetch(url, options)
+				if (!response.ok) {
+					console.log('Error: ', response.status, response.statusText);
+					return
+				}
+				const data = await response.json()
+			}
 			
 		}
 	};

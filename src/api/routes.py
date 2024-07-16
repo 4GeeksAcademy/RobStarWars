@@ -8,7 +8,7 @@ from datetime import datetime
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
-from api.models import db, Users, Comments, Posts, Planets, Starships
+from api.models import db, Users, Comments, Posts, Planets, Starships, Contacts
 
 
 
@@ -37,6 +37,23 @@ def login():
         return response_body, 200
     response_body['message'] = 'Bad username or password'
     return response_body, 401
+
+@api.route("/signup", methods=["POST"])
+def signup():
+    response_body = {}
+    email = request.json.get("email", None).lower()
+    password = request.json.get("password", None)
+    user = Users()
+    user.email = email
+    user.password = password
+    user.is_active = True
+    db.session.add(user)
+    db.session.commit(user)
+    response_body['message'] = 'Funciona'
+    access_token = create_access_token(identity={'user_id': user.id, 'name': user.first_name, 'last_name': user.last_name })
+    response_body['message'] = 'User registrado'
+    response_body['access_token'] = access_token
+    return response_body, 200
    
 # Protect a route with jwt_required, which will kick out requests
 @api.route("/profile", methods=["GET"])
@@ -106,10 +123,90 @@ def handle_specific_users(id):
         response_body['results'] = {}
         return response_body, 404
 
-@api.route('/comments', methods=['GET', 'POST'])
-def handle_comments(comments):
+@api.route('/contacts', methods=['GET', 'POST'])
+def handle_contacts():
+    response_body = {}
+
+    if request.method == 'GET':
+        contacts = db.session.query(Contacts).all()
+        if contacts:
+            response_body = {
+                'results': [contact.serialize() for contact in contacts],
+                'message': 'Contactos encontrados'
+            }
+            return jsonify(response_body), 200
+        response_body = {
+            'message': 'No hay contactos',
+            'results': []
+        }
+        return jsonify(response_body), 404
+        
+    if request.method == 'POST':
+        data = request.json
+               
+        new_contact = Contacts(
+            fullname=data['fullname'],
+            email=data['email'],
+            phone=data['phone'],
+            address=data['address']
+        )
+        db.session.add(new_contact)
+        db.session.commit()
+        
+        response_body['results'] = new_contact.serialize()
+        response_body['message'] = 'Contacto creado'
+        print(response_body)
+        return response_body, 201
+
+@api.route('/contacts/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_specific_contact(id):
     response_body = {}
     if request.method == 'GET':
-        pass
+        contact = db.session.query(Contacts).get(id)
+        if contact:
+            response_body = {
+                'results': contact.serialize(),
+                'message': 'Contacto encontrado'
+            }
+            return jsonify(response_body), 200
+        response_body = {
+            'message': 'Contacto inexistente',
+            'results': {}
+        }
+        return jsonify(response_body), 404
 
-      
+    if request.method == 'PUT':
+        data = request.json
+        contact = db.session.query(Contacts).get(id)
+        if contact:
+            contact.email = data.get('email', contact.email)
+            contact.phone = data.get('phone', contact.phone)
+            contact.fullname = data.get('fullname', contact.fullname)
+            contact.address = data.get('address', contact.address)
+            db.session.commit()
+            response_body = {
+                'message': 'Datos actualizados',
+                'results': contact.serialize()
+            }
+            return jsonify(response_body), 200
+        response_body = {
+            'message': 'Contacto inexistente',
+            'results': {}
+        }
+        return jsonify(response_body), 404
+
+    if request.method == 'DELETE':
+        contact = db.session.query(Contacts).get(id)
+        if contact:
+            db.session.delete(contact)
+            db.session.commit()
+            response_body = {
+                'message': 'Contacto eliminado',
+                'results': contact.serialize()
+            }
+            return jsonify(response_body), 200
+        response_body = {
+            'message': 'Contacto inexistente',
+            'results': {}
+        }
+        return jsonify(response_body), 404
