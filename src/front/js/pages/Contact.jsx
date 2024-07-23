@@ -63,6 +63,7 @@ export const Contact = () => {
       setEmail("");
 
       getContacts();
+      setPageAction(true);
     } catch (error) {
       console.error("Error submitting contact:", error);
     }

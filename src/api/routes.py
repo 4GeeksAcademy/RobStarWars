@@ -29,42 +29,70 @@ def login():
     response_body = {}
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    user = db.session.execute(db.select(Users).where(Users.email == email, Users.password == password, Users.is_active == True)).scalar()
+    
+    user = Users.query.filter_by(email=email, password=password, is_active=True).first()
+    
     if user:
-        access_token = create_access_token(identity={'user_id': user.id, 'name': user.first_name, 'last_name': user.last_name })
-        response_body['message'] = 'User Logueado'
+        access_token = create_access_token(identity={'user_id': user.id, 'is_admin': user.is_admin})
+        response_body['message'] = 'Usuario logueado'
         response_body['access_token'] = access_token
-        return response_body, 200
-    response_body['message'] = 'Bad username or password'
-    return response_body, 401
+        response_body['is_admin'] = user.is_admin
+        response_body['results'] = user.serialize()
+        return jsonify(response_body), 200
+    else:
+        response_body['message'] = 'Correo o contraseña incorrectos'
+        return jsonify(response_body), 401
 
-@api.route("/signup", methods=["POST"])
+
+@api.route('/signup', methods=['POST'])
 def signup():
     response_body = {}
-    email = request.json.get("email", None).lower()
-    password = request.json.get("password", None)
-    user = Users()
-    user.email = email
-    user.password = password
-    user.is_active = True
-    db.session.add(user)
-    db.session.commit(user)
-    response_body['message'] = 'Funciona'
-    access_token = create_access_token(identity={'user_id': user.id, 'name': user.first_name, 'last_name': user.last_name })
-    response_body['message'] = 'User registrado'
+    data = request.json
+    
+    email = data.get("email", None).lower()
+    password = data.get("password", None)
+    existing_user = Users.query.filter_by(email=email).first()
+    
+    if existing_user:
+        response_body['error'] = 'El correo electrónico ya está registrado'
+        return jsonify(response_body), 400
+    
+    print (request.json)
+    new_user = Users(
+        email=email,
+        password=password,
+        is_active=True,
+        first_name=data.get('first_name', None),
+        last_name=data.get('last_name', None),
+        is_admin=False,
+        pfp="https://www.teleadhesivo.com/es/img/arc226-jpg/folder/products-listado-merchanthover/pegatinas-coches-motos-space-invaders-marciano-iii.jpg"
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    
+    access_token = create_access_token(identity={'user_id': new_user.id})
+    response_body['message'] = 'Usuario registrado y logueado'
     response_body['access_token'] = access_token
-    return response_body, 200
+    
+    return jsonify(response_body), 200
    
 # Protect a route with jwt_required, which will kick out requests
 @api.route("/profile", methods=["GET"])
 @jwt_required()
-def profile():
+def get_profile():
+    print("-----------------------------------------------------------------------------------------------------------------")
     response_body = {}
-    # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     print(current_user)
-    response_body['message'] = f'User logueado: {current_user}'
-    return response_body, 200
+    user = Users.query.get(current_user['user_id'])
+    
+    if user:
+        response_body['message'] = 'Perfil encontrado'
+        response_body['results'] = user.serialize()
+        return jsonify(response_body), 200
+    else:
+        response_body['message'] = 'Perfil no encontrado'
+        return jsonify(response_body), 404
 
 @api.route('/planets', methods=['GET'])
 def handle_planets():
