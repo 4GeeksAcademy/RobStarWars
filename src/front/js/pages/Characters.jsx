@@ -51,7 +51,7 @@ export const Characters = () => {
                             <div className="d-flex justify-content-between align-items-center">
                                 <Link to={'/character-details/' + index} onClick={() => actions.setCurrentItem(item)} className="btn btn-primary mt-2">Más Info</Link>
                                 <i className="fa-solid fa-heart btn btn-danger" style={{width: "40px", height: "30px"}}
-                                   onClick={() => handleAddFavorite(index )}></i>
+                                   onClick={() => store.addFavorite}></i>
                             </div>
                         </div>
                     </div>
