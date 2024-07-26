@@ -128,9 +128,7 @@ export const Contact = () => {
 
   return (
     <div>
-      <div className="d-flex justify-content-end mx-3 my-3">
-        <Link to="/adminpanel"><button className="admin-button">Admin Panel</button></Link>
-      </div>
+      
       <div className="d-flex justify-content-center mx-auto my-5">
         <div className="btn-group" role="group" aria-label="Basic outlined example" style={{ width: "20%" }}>
           <button

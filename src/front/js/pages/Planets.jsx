@@ -5,7 +5,7 @@ import { Context } from "../store/appContext";
 export const Planets = () => {
 
 
-const { store } = useContext(Context)
+const { store, actions } = useContext(Context)
 
 const handleImageError = (event) => {
     event.target.src = "https://pbs.twimg.com/media/CqAE488UAAAeoX7.jpg"; 
@@ -27,7 +27,7 @@ return (<>
                     <div className="d-flex justify-content-between align-items-center">
                                 <Link to={'/planet-details/' + index} onClick={() => actions.setCurrentItem(item)} className="btn btn-primary mt-2">Más Info</Link>
                         <i className="fa-solid fa-heart btn btn-danger" style={{width: "40px", height: "30px"}}
-                                   onClick={() => store.addFavorite(item.name)}></i>
+                                   onClick={() => actions.addFavorites(item.name)}></i>
                             </div>
                     
                 </div>

@@ -59,7 +59,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			logout: () => {
-				setStore({ token: null, currentUser: null }); // Limpia el currentUser al cerrar sesión
+				setStore({ token: null, currentUser: null }); 
 				localStorage.removeItem('token');
 				getActions().setIsLogin(false);
 			},
@@ -105,8 +105,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			incrementar: () => {setStore({ counter: getStore().counter +1 })},
 			decrementar: () => {setStore({ counter: getStore().counter -1 })},
 			addFavorites: (newFavorite) => {setStore({ favorites: [...getStore().favorites, newFavorite ] }) },
-			removeFavorites: (removeItem) => {
-				setStore({favorites: getStore().favorites.filter((item) => != removeItem) })
+			removeFavorite: (removeItem) => {
+				setStore({favorites: getStore().favorites.filter((item) => item != removeItem) })
 			},
 		}
 	};
