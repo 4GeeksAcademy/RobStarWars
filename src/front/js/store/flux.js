@@ -21,7 +21,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			currentItem: {},
 			token: null,
 			admin: null,
-			currentUser: null, // Esta es la variable que necesitas
+			currentUser: null, 
+			counter: 0,
+			favorites: []
 		},
 		actions: {
 			login: async (email, password) => {
@@ -99,6 +101,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.error('Error updating favorites:', error);
 				}
+			},
+			incrementar: () => {setStore({ counter: getStore().counter +1 })},
+			decrementar: () => {setStore({ counter: getStore().counter -1 })},
+			addFavorites: (newFavorite) => {setStore({ favorites: [...getStore().favorites, newFavorite ] }) },
+			removeFavorites: (removeItem) => {
+				setStore({favorites: getStore().favorites.filter((item) => != removeItem) })
 			},
 		}
 	};
