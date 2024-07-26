@@ -77,7 +77,7 @@ export const Navbar = () => {
   </button>
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
 	  {store.favorites.map((item, index) =>
-	  <li key={index} className="dropdown-item">{item}</li>)}
+	  <li key={index} className="dropdown-item">{item} <span className=text-danger onClick={actions.removeFavorite(item)}><i className ="fas fa-trash"></i></span></li>)}
 </div>
 				</div>
 			</div>
