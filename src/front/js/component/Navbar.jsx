@@ -71,6 +71,14 @@ export const Navbar = () => {
 						</div>
 
 					}
+					<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+    Dropdown button
+  </button>
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+	  {store.favorites.map((item, index) =>
+	  <li key={index} className="dropdown-item">{item}</li>)}
+</div>
 				</div>
 			</div>
 		</nav>
