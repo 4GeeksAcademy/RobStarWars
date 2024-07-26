@@ -14,7 +14,7 @@ export const Contact = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const host = `${process.env.BACKEND_URL}`;
+  const host = "https://playground.4geeks.com/contact/agendas/Roro"
 
   useEffect(() => {
     getContacts();
@@ -22,7 +22,7 @@ export const Contact = () => {
 
   const getContacts = async () => {
     try {
-      const uri = `${host}/api/contacts`;
+      const uri = `${host}/contacts`;
       const options = { method: 'GET' };
       const response = await fetch(uri, options);
 
@@ -32,7 +32,7 @@ export const Contact = () => {
       }
 
       const data = await response.json();
-      setContacts(data.results);
+      setContacts(data.contacts);
     } catch (error) {
       console.error("Error fetching contacts:", error);
     }
@@ -40,8 +40,8 @@ export const Contact = () => {
 
   const handleSubmitContact = async () => {
     try {
-      const contactData = { fullname: name, phone, address, email };
-      const uri = `${host}/api/contacts`;
+      const contactData = { name: name, phone, address, email };
+      const uri = `${host}/contacts`;
       const options = {
         method: 'POST',
         headers: { "Content-Type": "application/json" },
@@ -76,13 +76,13 @@ export const Contact = () => {
 
     try {
       const dataToSend = {
-        fullname: currentContact.fullname,
+        name: currentContact.name,
         phone: currentContact.phone,
         address: currentContact.address,
         email: currentContact.email,
       };
 
-      const uri = `${host}/api/contacts/${currentContact.id}`;
+      const uri = `${host}/contacts/${currentContact.id}`;
       const options = {
         method: 'PUT',
         body: JSON.stringify(dataToSend),
@@ -107,7 +107,7 @@ export const Contact = () => {
 
   const deleteContact = async (item) => {
     try {
-      const uri = `${host}/api/contacts/${item.id}`;
+      const uri = `${host}/contacts/${item.id}`;
       const options = { method: 'DELETE' };
       const response = await fetch(uri, options);
 
@@ -154,7 +154,7 @@ export const Contact = () => {
           <h3 className="text-center">Lista</h3>
           <div className="mx-5 d-flex justify-content-center">
             <ul className="list-group" style={{ width: "60%" }}>
-              {contacts.map((item) => (
+              {contacts.length > 0 ? contacts.map((item) => (
                 <li key={item.id} className="list-group-item border border-top-0 border-end-0 border-3 border-bottom-2 border-start-1 mb-2">
                   {!pageEdit || (currentContact && currentContact.id !== item.id) ? (
                     <>
@@ -162,7 +162,7 @@ export const Contact = () => {
                         <div>
                           <div>
                             <span>
-                              <strong>Nombre: </strong>{item.fullname},
+                              <strong>Nombre: </strong>{item.name},
                               <strong> Teléfono: </strong>{item.phone},
                               <strong> Email: </strong>{item.email},
                             </span>
@@ -188,10 +188,10 @@ export const Contact = () => {
                           <input
                             type="text"
                             placeholder="name"
-                            value={currentContact.fullname}
+                            value={currentContact.name}
                             className="flex-input"
                             style={{ width: "60%" }}
-                            onChange={(event) => setCurrentContact({ ...currentContact, fullname: event.target.value })}
+                            onChange={(event) => setCurrentContact({ ...currentContact, name: event.target.value })}
                           />
                           <input
                             type="text"
@@ -218,7 +218,7 @@ export const Contact = () => {
                     )
                   )}
                 </li>
-              ))}
+              )) : <p>No hay contactos disponibles</p>}
             </ul>
           </div>
         </>
@@ -239,7 +239,7 @@ export const Contact = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-
+  
               <label className="mb-1" htmlFor="contact-phone">Teléfono</label>
               <div className="input-group mb-3">
                 <div className="input-group-prepend"></div>
@@ -252,7 +252,7 @@ export const Contact = () => {
                   onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
-
+  
               <label className="mb-1" htmlFor="contact-email">Email</label>
               <div className="input-group mb-3">
                 <div className="input-group-prepend"></div>
@@ -265,7 +265,7 @@ export const Contact = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-
+  
               <label className="mb-1" htmlFor="contact-address">Dirección</label>
               <div className="input-group">
                 <div className="input-group-prepend"></div>
@@ -287,4 +287,4 @@ export const Contact = () => {
       )}
     </div>
   );
-};
+}  

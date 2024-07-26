@@ -8,7 +8,8 @@ from datetime import datetime
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
-from api.models import db, Users, Comments, Posts, Planets, Starships, Contacts
+from api.models import db, Users, Comments, Posts, Planets, Starships, Contacts, Characters
+
 
 
 
@@ -33,10 +34,11 @@ def login():
     user = Users.query.filter_by(email=email, password=password, is_active=True).first()
     
     if user:
-        access_token = create_access_token(identity={'user_id': user.id, 'is_admin': user.is_admin})
+        access_token = create_access_token(identity={'user_id': user.id, 'is_admin': user.is_admin, 'id': user.id})
         response_body['message'] = 'Usuario logueado'
         response_body['access_token'] = access_token
         response_body['is_admin'] = user.is_admin
+        response_body['id'] = user.id
         response_body['results'] = user.serialize()
         return jsonify(response_body), 200
     else:
@@ -112,18 +114,23 @@ def handle_users():
     response_body['message'] = "Hello, this are the users"
     return response_body, 200
 
+
+@api.route('/users/<int:id>', methods=['GET'])
+def get_specific_users(id):
+    response_body = {}
+    user = db.session.execute(db.select(Users).where(Users.id == id)).scalar()
+    if user:
+        response_body['results'] = user.serialize()
+        response_body['message'] = 'Usuario encontrado'
+        return jsonify(response_body), 200
+    response_body['message'] = 'Usuario inexistente'
+    response_body['results'] = {}
+    return jsonify(response_body), 404
+
+
 @api.route('/users/<int:id>', methods=['GET', 'POST', 'DELETE'])
 def handle_specific_users(id):
     response_body = {}
-    if request.method == 'GET':
-        user = db.session.execute(db.select(Users).where(Users.id == user_id)).scalar()
-        if user:
-            response_body['results'] = use.serialize()
-            response_body['message'] = 'Usuario encontrado'
-            return response_body
-        response_body['message'] = 'Usuario inexistente'
-        response_body['results'] = {}
-        return response_body, 404
     if request.method == 'PUT':
         data = request.json
         user = db.session.execute(db.select(Users).where(Users.id == user_id)).scalar()
@@ -238,3 +245,44 @@ def handle_specific_contact(id):
             'results': {}
         }
         return jsonify(response_body), 404
+
+@api.route('/favorites', methods=['POST'])
+def add_favorite():
+    data = request.json
+    favorited_by_id = data.get('favorited_by_id')
+    character_id = data.get('character_id')
+    
+    user = Users.query.get(favorited_by_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    character = Characters.query.get(character_id)  
+    if not character:
+        return jsonify({'error': 'Character not found'}), 404
+    
+    new_favorite = FavoriteCharacters(favorited_by_id=favorited_by_id, character_id=character_id)
+    db.session.add(new_favorite)
+    db.session.commit()
+    
+    return jsonify({'message': 'Favorite added'}), 201
+
+
+
+@api.route('/favorites/<int:user_id>', methods=['GET'])
+def get_favorites(user_id):
+    favorites = FavoriteCharacters.query.filter_by(favorited_by_id=user_id).all()
+    favorites_list = [{'id': f.id, 'favorited_by_id': f.favorited_by_id} for f in favorites]
+    
+    return jsonify(favorites_list), 200
+
+@api.route('/favorites/<int:id>', methods=['DELETE'])
+def remove_favorite(id):
+    favorite = FavoriteCharacters.query.get(id)
+    if not favorite:
+        return jsonify({'error': 'Favorite not found'}), 404
+    
+    db.session.delete(favorite)
+    db.session.commit()
+    
+    return jsonify({'message': 'Favorite removed'}), 200
+
