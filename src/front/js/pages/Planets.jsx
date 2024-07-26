@@ -24,7 +24,12 @@ return (<>
                     <span className="card-text">Gender: {item.population}</span><br />
                     <span className="card-text">Hair color: {item.terrain}</span><br />
                     <span className="card-text">Eye color: {item.climate}</span><br />
-                    <Link to={'/planet-details/' + index} onClick={() => actions.setCurrentItem(item)} className="btn btn-primary mt-2">Más Info</Link>
+                    <div className="d-flex justify-content-between align-items-center">
+                                <Link to={'/planet-details/' + index} onClick={() => actions.setCurrentItem(item)} className="btn btn-primary mt-2">Más Info</Link>
+                        <i className="fa-solid fa-heart btn btn-danger" style={{width: "40px", height: "30px"}}
+                                   onClick={() => store.addFavorite(item.name)}></i>
+                            </div>
+                    
                 </div>
             </div>
         ))}
